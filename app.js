@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import express from 'express'
 import mongoose from 'mongoose'
-import postModel from './models/app.model.js'
+import router from './routes/post.route.js'
 dotenv.config()
 
 const app = express()
@@ -9,29 +9,32 @@ const port = process.env.PORT || 8080
 
 app.use(express.json())
 
-app.get('/', async (req, res) => {
-	try {
-		const allPosts = await postModel.find()
-		res.status(200).json(allPosts)
-	} catch (error) {
-		res.status(500).json(error)
-	}
-	res.status(200).json({ message: 'hello world' })
-})
-app.post('/', async (req, res) => {
-	try {
-		const { title, body } = req.body
-		const newPost = await postModel.create({ title, body })
-		res.status(201).json(newPost)
-	} catch (error) {
-		res.status(500).json(error)
-	}
-})
+// Routes
+app.use('/api/post', router)
 
-app.delete('/:id', (req, res) => {
-	const { id } = req.params
-	res.send(id)
-})
+// app.get('/', async (req, res) => {
+// 	try {
+// 		const allPosts = await postModel.find()
+// 		res.status(200).json(allPosts)
+// 	} catch (error) {
+// 		res.status(500).json(error)
+// 	}
+// 	res.status(200).json({ message: 'hello world' })
+// })
+// app.post('/', async (req, res) => {
+// 	try {
+// 		const { title, body } = req.body
+// 		const newPost = await postModel.create({ title, body })
+// 		res.status(201).json(newPost)
+// 	} catch (error) {
+// 		res.status(500).json(error)
+// 	}
+// })
+
+// app.delete('/:id', (req, res) => {
+// 	const { id } = req.params
+// 	res.send(id)
+// })
 
 const db_url = process.env.DB_URL
 const bootstrap = async () => {
