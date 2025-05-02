@@ -1,18 +1,31 @@
+import dotenv from 'dotenv'
 import express from 'express'
+import mongoose from 'mongoose'
+import postModel from './models/app.model.js'
+dotenv.config()
 
 const app = express()
-const port = 8080
+const port = process.env.PORT || 8080
 
 app.use(express.json())
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+	try {
+		const allPosts = await postModel.find()
+		res.status(200).json(allPosts)
+	} catch (error) {
+		res.status(500).json(error)
+	}
 	res.status(200).json({ message: 'hello world' })
 })
-app.post('/', (req, res) => {
-	const { firstName, lastName } = req.body
-	const msg = `his fullname is - ${firstName} ${lastName}`
-
-	res.send(msg)
+app.post('/', async (req, res) => {
+	try {
+		const { title, body } = req.body
+		const newPost = await postModel.create({ title, body })
+		res.status(201).json(newPost)
+	} catch (error) {
+		res.status(500).json(error)
+	}
 })
 
 app.delete('/:id', (req, res) => {
@@ -20,6 +33,16 @@ app.delete('/:id', (req, res) => {
 	res.send(id)
 })
 
-app.listen(port, () =>
-	console.log(`Example app listening on port - http://localhost:${port}`)
-)
+const db_url = process.env.DB_URL
+const bootstrap = async () => {
+	try {
+		await mongoose.connect(db_url).then(() => console.log('Connected DB'))
+		app.listen(port, () =>
+			console.log(`Example app listening on port - http://localhost:${port}`)
+		)
+	} catch (error) {
+		console.log(`Connection error with DB: ${error}`)
+	}
+}
+
+bootstrap()
