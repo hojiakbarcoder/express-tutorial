@@ -11,8 +11,16 @@ class PostController {
 	}
 	async create(req, res) {
 		try {
-			const post = await postService.create(req.body)
+			const post = await postService.create(req.body, req.files)
 			res.status(201).json(post)
+		} catch (error) {
+			res.status(500).json(error)
+		}
+	}
+	async delete(req, res) {
+		try {
+			const post = await postService.delete(req.params.id)
+			res.status(200).json(post)
 		} catch (error) {
 			res.status(500).json(error)
 		}

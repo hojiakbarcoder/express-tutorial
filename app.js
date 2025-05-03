@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import express from 'express'
+import fileUpload from 'express-fileupload'
 import mongoose from 'mongoose'
 import router from './routes/post.route.js'
 dotenv.config()
@@ -8,6 +9,8 @@ const app = express()
 const port = process.env.PORT || 8080
 
 app.use(express.json())
+app.use(fileUpload({}))
+app.use(express.static('static'))
 
 // Routes
 app.use('/api/post', router)
